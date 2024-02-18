@@ -1,0 +1,63 @@
+# cd /etc/netplan/
+
+# nano arquivo.yaml
+
+# netplan apply
+ip a
+# nano /etc/resolv.conf
+
+# apt -y install bind9 bind9utils
+ 
+# nano /etc/bind/named.conf
+
+	include "/etc/bind/named.conf.rede-interna";
+
+# nano /etc/bind/named.conf.options
+
+
+
+        allow-query { localhost; 192.168.100.0/24; };
+        allow-transfer { localhost; };
+        recursion yes;
+
+
+
+# nano /etc/bind/named.conf.rede-interna
+
+
+=============================
+
+zone "empresa.local" IN {
+        type master;
+        file "/etc/bind/empresa.local.db";
+};
+
+===============================
+
+# nano /etc/bind/empresa.local.db
+
+$TTL 24h
+@       IN      SOA     dns.empresa.local. root.empresa.local. (
+        1               ; Serial
+        12h             ; Refresh
+        15m             ; Retry
+        3w              ; Expire
+        2h              ; Mininum TTL
+)
+
+@       IN      NS      dns.empresa.local.
+dns     IN      A       192.168.100.10
+
+server1    IN      A       192.168.100.10
+server2    IN      A       192.168.100.11
+www        IN      A       192.168.100.11
+email      IN      A       192.168.100.11
+
+
+# nano /etc/default/named
+
+	OPTIONS="-u bind -4"	
+
+
+# systemctl enable named
+# systemctl start named

@@ -1,0 +1,74 @@
+nmcli connection modify enp0s3 ipv4.dns "192.168.100.11 8.8.8.8"
+
+resolvectl dns enp0s3 192.168.100.11
+
+nano /etc/resolv.conf
+
+dnf -y install bind bind-utils
+
+nano /etc/named.conf
+
+
+zone "fedora.home" IN {
+        type master;
+        file "/var/named/fedora.home.lan";
+        allow-update { none; };
+};
+
+zone "minhacasa.com.br" IN {
+        type master;
+        file "/var/named/minhacasa.com.br.lan";
+        allow-update { none; };
+};
+
+
+nano /etc/sysconfig/named
+
+	OPTIONS="-4"
+
+
+
+nano /var/named/fedora.home.lan
+
+$TTL 24h
+@       IN      SOA     dns.fedora.home. root.fedora.home. (
+        1               ; Serial
+        12h             ; Refresh
+        15m             ; Retry
+        3w              ; Expire
+        2h              ; Mininum TTL
+)
+
+@       IN      NS      dns.fedora.home.
+dns     IN      A       192.168.100.11
+
+server2    IN      A       192.168.100.11
+www        IN      A       192.168.100.11
+
+
+
+nano /var/named/minhacasa.com.br.lan
+
+
+$TTL 24h
+@       IN      SOA     dns.minhacasa.com.br. root.minhacasa.com.br. (
+        1               ; Serial
+        12h             ; Refresh
+        15m             ; Retry
+        3w              ; Expire
+        2h              ; Mininum TTL
+)
+
+@       IN      NS      dns.minhacasa.com.br.
+dns     IN      A       192.168.100.11
+
+server2    IN      A       192.168.100.11
+www        IN      A       192.168.100.11
+
+
+
+systemctl restart named
+firewall-cmd --add-service=dns --permanent
+firewall-cmd --reload
+
+

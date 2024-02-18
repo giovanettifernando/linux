@@ -1,0 +1,24 @@
+
+
+wget http://site1368633667.hospedagemdesites.ws/site1.zip
+
+  
+nano /etc/httpd/conf.d/vhost.conf
+ 
+ 
+<VirtualHost *:80>
+    DocumentRoot /var/www/html/site1
+    ServerName www.fedora.home
+    ErrorLog logs/fedora.home-error_log
+    CustomLog logs/fedora.home-access_log combined
+</VirtualHost>
+
+
+<Directory "/var/www/html/site1">
+    Options FollowSymLinks
+    AllowOverride All
+</Directory>
+
+
+
+
